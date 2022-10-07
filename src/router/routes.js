@@ -1,12 +1,7 @@
 const routes = [
   {
-<<<<<<< HEAD
     path: "/",
     component: () => import("layouts/LoginLayout.vue"),
-=======
-    path: '/',
-    component: () => import('layouts/MainLayoutLogado.vue'),
->>>>>>> a82c2da86fb5be7cef9aff98014e8f0fd38b038a
     children: [
       {
         path: "",
