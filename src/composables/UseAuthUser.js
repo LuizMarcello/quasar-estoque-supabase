@@ -110,8 +110,4 @@ export default function useAuthUser() {
     update,
     sendPasswordRestEmail
   }
-
-
-
-
 }
