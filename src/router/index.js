@@ -40,6 +40,17 @@ export default route(function (/* { store, ssrContext } */) {
   Router.beforeEach((to) => {
     const { isLoggedIn } = useAuthUser();
 
+    /* Verificando se o hash para resetar a senha existe */
+    if (to.hash.includes("type=recovery") && to.name !== "reset-password") {
+      /* Extraindo somente o token da url */
+      const accessToken = to.hash.split("&")[0];
+      /* Agora, por último, retirando também "#access_token"
+         da url, restando realmente somente o token, que 
+         estará na variável "token" abaixo */
+      const token = accessToken.replace("#access_token", "");
+      return { name: "reset-password", query: { token } };
+    }
+
     if (
       !isLoggedIn() &&
       to.meta.requiresAuth &&

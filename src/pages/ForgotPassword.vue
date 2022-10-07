@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <q-form class="row justify-center" @submit.prevent="handlePasswordReset">
+    <q-form class="row justify-center" @submit.prevent="handleForgotPassword">
       <p class="col-12 text-h5 text-center">Resetar a senha</p>
       <div class="col-md-4 col-sm-6 col-xs-10 q-gutter-y-md">
 
@@ -26,7 +26,7 @@ export default defineComponent({
 
     const email = ref('')
 
-    const handlePasswordReset = async () => {
+    const handleForgotPassword = async () => {
       await sendPasswordRestEmail(email.value)
       alert(`Email para resetar a senha enviado com sucesso para: ${email.value}`)
     }
@@ -34,7 +34,7 @@ export default defineComponent({
     /* Este "return" é para que eles sejam usados aqui neste componente mesmo */
     return {
       email,
-      handlePasswordReset
+      handleForgotPassword
     }
   },
 })
