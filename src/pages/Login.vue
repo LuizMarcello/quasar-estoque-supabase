@@ -6,27 +6,15 @@
         <q-input label="Email" v-model="form.email" />
         <q-input label="Password" v-model="form.password" />
         <div class="full-width q-pt-md">
-          <q-btn
-            label="Login"
-            color="primary"
-            class="full-width"
-            outline
-            rounded
-            size="lg"
-            type="submit"
-          />
+          <q-btn label="Login" color="primary" class="full-width" outline rounded size="lg" type="submit" />
         </div>
 
-        <div class="full-width">
-          <q-btn
-            label="Registrar"
-            color="primary"
-            class="full-width"
-            flat
-            size="lg"
-            to="/register"
-          />
+        <div class="full-width q-gutter-y-sm">
+          <q-btn label="Registrar" color="dark" class="full-width" flat size="sm" to="/register" />
+
+          <q-btn label="Esqueceu a senha ?" color="dark" class="full-width" flat size="sm" to="/forgot-password" />
         </div>
+
       </div>
     </q-form>
   </q-page>
@@ -45,7 +33,7 @@ export default defineComponent({
       email: "",
       password: "",
     });
-    
+
     /* Método que será disparado para efetuar o login */
     const handleLogin = async () => {
       try {

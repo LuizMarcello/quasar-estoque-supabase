@@ -2,14 +2,21 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
-        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
+        <q-btn
+          flat
+          dense
+          round
+          icon="menu"
+          aria-label="Menu"
+          @click="toggleLeftDrawer"
+        />
 
         <q-toolbar-title> Quasar App </q-toolbar-title>
 
         <!-- <div>Quasar v{{ $q.version }}</div> -->
         <q-btn-dropdown flat color="white" icon="person">
           <q-list>
-            <q-item clickable v-close-popup>
+            <q-item clickable v-close-popup @click="handleLogout">
               <q-item-section>
                 <q-item-label>Sair</q-item-label>
               </q-item-section>
@@ -23,7 +30,11 @@
       <q-list>
         <q-item-label header> Essential Links </q-item-label>
 
-        <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" />
+        <EssentialLink
+          v-for="link in essentialLinks"
+          :key="link.title"
+          v-bind="link"
+        />
       </q-list>
     </q-drawer>
 
@@ -39,10 +50,11 @@ import { defineComponent, ref } from "vue";
    e foi "exportada" no "export default". Então acho que é por isso
    que aqui, neste "import, não está entre chaves. */
 import useAuthUser from "src/composables/UseAuthUser";
-/* import EssentialLink from "components/EssentialLink.vue"; */
+import EssentialLink from "components/EssentialLink.vue";
 import { useRouter } from "vue-router";
-/* Para poder usar o plugin do quasar "Dialog" */
+/* Para também poder usar o plugin do quasar "Dialog" */
 import { useQuasar } from "quasar";
+
 const linksList = [
   {
     title: "Docs",
@@ -89,21 +101,36 @@ const linksList = [
 ];
 export default defineComponent({
   name: "MainLayout",
+
   components: {
     EssentialLink,
   },
+
   setup() {
     const leftDrawerOpen = ref(false);
-    /* Para poder usar o plugin do quasar "Dialog" */
+    /* Para também poder usar o plugin do quasar "Dialog" */
     const $q = useQuasar();
     const router = useRouter();
     /* Pegando do nosso composable "UseAuthUser.js" */
     const { logout } = useAuthUser();
+
+    /* Para efetuar o logoff */
     const handleLogout = async () => {
       $q.dialog({
-
-      })
-      await logout();
+        title: "Logout",
+        message: "Certeza que você quer sair ?",
+        cancel: true,
+        /* Clicando fora do diálogo, a janela não some.
+           tem que clicar em "Cancelar" ou  "OK" */
+        persistent: true,
+      }).onOk(async () => {
+        await logout();
+        /* O push permite apertar o botão de voltar, porque as telas
+           foram adicionadas nas pilhas */
+        // router.push({ name: "Login" });
+        /* O replace não permite voltar, zera a pilha(rota) */
+        router.replace({ name: "Login" });
+      });
     };
     return {
       essentialLinks: linksList,
