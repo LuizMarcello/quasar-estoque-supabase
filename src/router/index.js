@@ -1,12 +1,14 @@
-import { route } from "quasar/wrappers";
+import {
+  route
+} from 'quasar/wrappers'
+import useAuthUser from 'src/composables/UseAuthUser'
 import {
   createRouter,
   createMemoryHistory,
   createWebHistory,
-  createWebHashHistory,
-} from "vue-router";
-import routes from "./routes";
-import useAuthUser from "src/composables/UseAuthUser";
+  createWebHashHistory
+} from 'vue-router'
+import routes from './routes'
 
 /*
  * If not building with SSR mode, you can
@@ -17,48 +19,49 @@ import useAuthUser from "src/composables/UseAuthUser";
  * with the Router instance.
  */
 
-export default route(function (/* { store, ssrContext } */) {
-  const createHistory = process.env.SERVER
-    ? createMemoryHistory
-    : process.env.VUE_ROUTER_MODE === "history"
-    ? createWebHistory
-    : createWebHashHistory;
+export default route(function ( /* { store, ssrContext } */ ) {
+  const createHistory = process.env.SERVER ?
+    createMemoryHistory :
+    (process.env.VUE_ROUTER_MODE === 'history' ? createWebHistory : createWebHashHistory)
 
   const Router = createRouter({
-    scrollBehavior: () => ({ left: 0, top: 0 }),
+    scrollBehavior: () => ({
+      left: 0,
+      top: 0
+    }),
     routes,
 
     // Leave this as is and make changes in quasar.conf.js instead!
     // quasar.conf.js -> build -> vueRouterMode
     // quasar.conf.js -> build -> publicPath
-    history: createHistory(
-      process.env.MODE === "ssr" ? void 0 : process.env.VUE_ROUTER_BASE
-    ),
-  });
+    history: createHistory(process.env.MODE === 'ssr' ? void 0 : process.env.VUE_ROUTER_BASE)
+  })
 
-  /* "meta": Será usado nas rotas bloqueadas(privadas) */
+  /* Verificação se está realmente logado */
   Router.beforeEach((to) => {
-    const { isLoggedIn } = useAuthUser();
+    const {
+      isLoggedIn
+    } = useAuthUser()
 
-    /* Verificando se o hash para resetar a senha existe */
-    if (to.hash.includes("type=recovery") && to.name !== "reset-password") {
-      /* Extraindo somente o token da url */
-      const accessToken = to.hash.split("&")[0];
-      /* Agora, por último, retirando também "#access_token"
-         da url, restando realmente somente o token, que 
-         estará na variável "token" abaixo */
-      const token = accessToken.replace("#access_token", "");
-      return { name: "reset-password", query: { token } };
+    /* Se existe o hash, e preparando o token para ser enviado, para alterar a senha. */
+    if (to.hash.includes('type=recovery') &&
+      to.name !== 'reset-password') {
+      const accessToken = to.hash.split('&')[0]
+      const token = accessToken.replace('#access_token=', '')
+      return {
+        name: 'reset-password',
+        query: {
+          token
+        }
+      }
     }
 
-    if (
-      !isLoggedIn() &&
-      to.meta.requiresAuth &&
-      !Object.keys(to.query).includes("fromEmail")
-    ) {
-      return { name: "login" };
+    if (!isLoggedIn() && to.meta.requiresAuth && !Object.keys(to.query).includes('fromEmail')) {
+      return {
+        name: 'login'
+      }
     }
-  });
+  })
 
-  return Router;
-});
+  return Router
+})

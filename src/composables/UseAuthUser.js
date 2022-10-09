@@ -1,7 +1,9 @@
 /* eslint-disable */
 /* Este composable é para login, logout, usuários, senhas */
 /* Para reatividade (vue3) */
-import { ref } from "vue";
+import {
+  ref
+} from "vue";
 
 import useSupabase from "src/boot/supabase";
 
@@ -11,10 +13,18 @@ import useSupabase from "src/boot/supabase";
 const user = ref(null);
 
 export default function useAuthUser() {
-  const { supabase } = useSupabase();
+  const {
+    supabase
+  } = useSupabase();
 
-  const login = async ({ email, password }) => {
-    const { user, error } = await supabase.auth.signIn({
+  const login = async ({
+    email,
+    password
+  }) => {
+    const {
+      user,
+      error
+    } = await supabase.auth.signIn({
       email,
       password,
     });
@@ -24,7 +34,10 @@ export default function useAuthUser() {
 
   /* Logar com redes sociais */
   const loginWithSocialProvider = async (provider) => {
-    const { user, error } = await supabase.auth.signIn({
+    const {
+      user,
+      error
+    } = await supabase.auth.signIn({
       provider,
     });
     if (error) throw error;
@@ -32,7 +45,9 @@ export default function useAuthUser() {
   };
 
   const logout = async () => {
-    const { error } = await supabase.auth.signOut();
+    const {
+      error
+    } = await supabase.auth.signOut();
     if (error) throw error;
   };
 
@@ -42,45 +57,59 @@ export default function useAuthUser() {
   };
 
   /* Para cadastrar(registrar) um novo usuário */
-  const register = async ({ email, password, ...meta }) => {
-    const { user, error } = await supabase.auth.signUp(
-      {
-        email,
-        password,
-      },
-      {
-        data: meta,
-        redirectTo: `${window.location.origin}
+  const register = async ({
+    email,
+    password,
+    ...meta
+  }) => {
+    const {
+      user,
+      error
+    } = await supabase.auth.signUp({
+      email,
+      password,
+    }, {
+      data: meta,
+      redirectTo: `${window.location.origin}
       /me?fromEmail=registrationConfirmation`,
-      }
-    );
+    });
     if (error) throw error;
     return user;
   };
 
   /* Para atualizar alguma informação */
   const update = async (data) => {
-    const { user, error } = await supabase.auth.update(data);
+    const {
+      user,
+      error
+    } = await supabase.auth.update(data);
     if (error) throw error;
     return user;
   };
 
   /* Resetar a senha */
   const sendPasswordRestEmail = async (email) => {
-    const { user, error } = await supabase.auth.api.resetPasswordForEmail(
-      email
-    );
-    if (error) throw error;
-    return user;
-  };
-
+    const {
+      user,
+      error
+    } = await supabase.auth.api.resetPasswordForEmail(email)
+    if (error) throw error
+    return user
+  }
+  
+  /* Envio para o e-mail, o qual a senha será resetada */
   const resetPassword = async (accessToken, newPassword) => {
-    const { user, error } = await supabase.auth.api.updateUser(accessToken, {
-      password: newPassword,
-    });
-    if (error) throw error;
-    return user;
-  };
+    const {
+      user,
+      error
+    } = await supabase.auth.api.updateUser(
+      accessToken, {
+        password: newPassword
+      }
+    )
+    if (error) throw error
+    return user
+  }
 
   /* Por ser vuejs3, retornar todos estes métodos */
   return {

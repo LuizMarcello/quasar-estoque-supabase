@@ -8,8 +8,8 @@
 
         <div class="full-width q-pt-md q-gutter-y-sm">
           <q-btn label="Enviar email para resetar a senha" color="primary" class="full-width" outline rounded size="md"
-            type="submit" />
-          <q-btn label="Voltar" color="dark" class="full-width" rounded flat size="sm" :to="{ name: 'login' }" />
+            type="submit"></q-btn>
+          <q-btn label="Voltar" color="dark" class="full-width" rounded flat size="sm" :to="{ name: 'login' }"></q-btn>
         </div>
       </div>
     </q-form>
@@ -17,14 +17,14 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref } from 'vue';
 import useAuthUser from 'src/composables/UseAuthUser';
 
 export default defineComponent({
   setup() {
-    const { sendPasswordRestEmail } = useAuthUser()
+    const { sendPasswordRestEmail } = useAuthUser();
 
-    const email = ref('')
+    const email = ref('');
 
     const handleForgotPassword = async () => {
       await sendPasswordRestEmail(email.value)
@@ -34,7 +34,7 @@ export default defineComponent({
     /* Este "return" é para que eles sejam usados aqui neste componente mesmo */
     return {
       email,
-      handleForgotPassword
+      handleForgotPassword,
     }
   },
 })

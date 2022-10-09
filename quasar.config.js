@@ -125,7 +125,10 @@ module.exports = configure(function (ctx) {
       // Quasar plugins
       // Este plugin do quasar, é para que, ao clicar no logout,
       // ele não saia diretamente, sem confirmar nada.
-      plugins: ['Dialog']
+      plugins: [
+        'Dialog',
+        'Notify'
+      ]
     },
 
     // animations: 'all', // --- includes all animations

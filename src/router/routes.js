@@ -3,8 +3,8 @@ const routes = [
   {
     path: "/",
     component: () => import("layouts/LoginLayout.vue"),
-    children: [
-      {
+
+    children: [{
         path: "",
         name: "loginDefault",
         component: () => import("pages/Login.vue"),
@@ -42,8 +42,7 @@ const routes = [
   {
     path: "/",
     component: () => import("layouts/MainLayout.vue"),
-    children: [
-      {
+    children: [{
         path: "me",
         name: "me",
         component: () => import("pages/Me.vue"),

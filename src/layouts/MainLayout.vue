@@ -129,7 +129,8 @@ export default defineComponent({
            foram adicionadas nas pilhas */
         // router.push({ name: "Login" });
         /* O replace não permite voltar, zera a pilha(rota) */
-        router.replace({ name: "Login" });
+        /* router.replace({ name: "Login" }); */
+        router.push({ name: "login" });
       });
     };
     return {
