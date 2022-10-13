@@ -4,7 +4,8 @@ const routes = [
     path: "/",
     component: () => import("layouts/LoginLayout.vue"),
 
-    children: [{
+    children: [
+      {
         path: "",
         name: "loginDefault",
         component: () => import("pages/Login.vue"),
@@ -37,15 +38,20 @@ const routes = [
     ],
   },
 
-
   /* Todas as rotas aqui neste layout precisam estar logadas */
   {
     path: "/",
     component: () => import("layouts/MainLayout.vue"),
-    children: [{
+    children: [
+      {
         path: "me",
         name: "me",
         component: () => import("pages/Me.vue"),
+      },
+      {
+        path: "category",
+        name: "category",
+        component: () => import("pages/category/List.vue"),
       },
       /*
     {

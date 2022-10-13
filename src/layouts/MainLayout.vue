@@ -61,6 +61,12 @@ const linksList = [
     caption: '',
     icon: 'mdi-home',
     routeName: 'me'
+  },
+  {
+    title: 'Category',
+    caption: '',
+    icon: 'mdi-shape-outline',
+    routeName: 'category'
   }
 ]
 export default defineComponent({

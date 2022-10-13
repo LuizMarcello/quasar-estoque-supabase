@@ -1,5 +1,5 @@
 <template>
-  <q-item clickable :to="{ name: routeName }">
+  <q-item clickable :to="{ name: routeName }" exact>
     <q-item-section v-if="icon" avatar>
       <q-icon :name="icon" />
     </q-item-section>
@@ -16,6 +16,8 @@ import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'EssentialLink',
+
+  /* Estas são as "props" usadas: */
   props: {
     title: {
       type: String,
