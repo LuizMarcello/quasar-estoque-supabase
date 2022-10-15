@@ -4,8 +4,7 @@ const routes = [
     path: "/",
     component: () => import("layouts/LoginLayout.vue"),
 
-    children: [
-      {
+    children: [{
         path: "",
         name: "loginDefault",
         component: () => import("pages/Login.vue"),
@@ -42,8 +41,7 @@ const routes = [
   {
     path: "/",
     component: () => import("layouts/MainLayout.vue"),
-    children: [
-      {
+    children: [{
         path: "me",
         name: "me",
         component: () => import("pages/Me.vue"),
@@ -53,6 +51,11 @@ const routes = [
         name: "category",
         component: () => import("pages/category/List.vue"),
       },
+      {
+        path: "form-category",
+        name: "form-category",
+        component: () => import("pages/category/Form.vue"),
+      },
       /*
     {
           path: "",
@@ -60,7 +63,8 @@ const routes = [
     }
     */
     ],
-    /* Todas as rotas aqui precisam estar logadas */
+    /* meta: Para que as rotas sejam logadas
+       Configurado no arquivo router/index.js */
     meta: {
       requiresAuth: true,
     },

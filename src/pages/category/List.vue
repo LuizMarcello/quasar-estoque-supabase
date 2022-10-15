@@ -13,7 +13,13 @@
         <template v-slot:top>
           <span class="text-h6"> Category </span>
           <q-space />
-          <q-btn label="Add New" color="primary" />
+          <q-btn
+            label="Add New"
+            color="primary"
+            icon="mdi-plus"
+            dense
+            :to="{ name: 'form-category' }"
+          />
         </template>
 
         <template v-slot:body-cell-actions="props">
@@ -81,7 +87,7 @@ export default defineComponent({
         /* Tabela do supabase "category" */
         loading.value = true;
         categories.value = await list("category");
-        loading.value = false
+        loading.value = false;
       } catch (error) {
         notifyError(error.message);
       }
