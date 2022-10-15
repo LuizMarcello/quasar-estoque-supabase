@@ -4,10 +4,11 @@
     <div class="row">
       <q-table
         title="Category"
-        :rows="rows"
+        :rows="categories"
         :columns="columns"
         row-key="id"
         class="col-12"
+        :loading="loading"
       >
         <template v-slot:top>
           <span class="text-h6"> Category </span>
@@ -49,24 +50,53 @@ const columns = [
   },
 ];
 
-const rows = [
-  {
-    id: "123",
-    name: "Tenis",
-  },
-];
-
 /* vue3 */
-import { defineComponent } from "vue";
+/* Na "compositionApi" do vue3, temos que importar
+   este "onMounted" */
+import { defineComponent, ref, onMounted } from "vue";
+import useApi from "src/composables/UseApi";
+import useNotify from "src/composables/UseNotify";
 
 /* vue3 */
 export default defineComponent({
   name: "PageCategoryList",
 
   setup() {
+    const categories = ref([]);
+
+    /* Com esta variável "api", temos acesso a todos os métodos
+       dentro do composable de acesso a api (para o supabase)
+       (UseApi.js)  */
+    //const api = useApi();
+    /* Mas assim importamos o método "list", diretamente de
+       dentro do composable */
+    const { list } = useApi();
+
+    const loading = ref(true);
+
+    const { notifyError } = useNotify();
+
+    const handleListCategories = async () => {
+      try {
+        /* Tabela do supabase "category" */
+        loading.value = true;
+        categories.value = await list("category");
+        loading.value = false
+      } catch (error) {
+        notifyError(error.message);
+      }
+    };
+
+    onMounted(() => {
+      handleListCategories();
+    });
+
+    /* return: Exportando para serem usados aqui
+               neste componente mesmo */
     return {
       columns,
-      rows,
+      categories,
+      loading,
     };
   },
 });
