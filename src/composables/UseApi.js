@@ -5,7 +5,7 @@ export default function useApi() {
   const {
     supabase
   } = useSupabase()
-  
+
   const {
     user
   } = useAuthUser()
@@ -56,9 +56,9 @@ export default function useApi() {
       error
     } = await supabase
       .from(table)
-      .update([
+      .update({
         ...form
-      ])
+      })
       .match({
         id: form.id
       })

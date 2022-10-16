@@ -25,9 +25,16 @@
         <template v-slot:body-cell-actions="props">
           <q-td :props="props" class="q-gutter-x-sm">
             <!-- "dense": tira os espaços laterais, diminui -->
-            <q-btn icon="mdi-pencil-outline" color="info" dense size="sm">
+            <q-btn
+              icon="mdi-pencil-outline"
+              color="info"
+              dense
+              size="sm"
+              @click="handleEdit(props.row)"
+            >
               <q-tooltip> Editar </q-tooltip>
             </q-btn>
+            
             <q-btn icon="mdi-delete-outline" color="negative" dense size="sm">
               <q-tooltip> Deletar </q-tooltip>
             </q-btn>
@@ -62,6 +69,7 @@ const columns = [
 import { defineComponent, ref, onMounted } from "vue";
 import useApi from "src/composables/UseApi";
 import useNotify from "src/composables/UseNotify";
+import { useRouter } from "vue-router";
 
 /* vue3 */
 export default defineComponent({
@@ -80,6 +88,8 @@ export default defineComponent({
 
     const loading = ref(true);
 
+    const router = useRouter()
+
     const { notifyError } = useNotify();
 
     const handleListCategories = async () => {
@@ -93,6 +103,10 @@ export default defineComponent({
       }
     };
 
+    const handleEdit = (category) => {
+      router.push({ name: "form-category", params: { id: category.id } });
+    };
+
     onMounted(() => {
       handleListCategories();
     });
@@ -103,6 +117,7 @@ export default defineComponent({
       columns,
       categories,
       loading,
+      handleEdit
     };
   },
 });
