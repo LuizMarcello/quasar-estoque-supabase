@@ -3,15 +3,15 @@
   <q-page padding>
     <div class="row">
       <q-table
-        title="Category"
-        :rows="categories"
-        :columns="columnsCategory"
+        title="Products"
+        :rows="products"
+        :columns="columnsProduct"
         row-key="id"
         class="col-12"
         :loading="loading"
       >
         <template v-slot:top>
-          <span class="text-h6"> Category </span>
+          <span class="text-h6"> Product </span>
           <q-space />
 
           <!-- Assim -->
@@ -21,7 +21,7 @@
             color="primary"
             icon="mdi-plus"
             dense
-            :to="{ name: 'form-category' }"
+            :to="{ name: 'form-product' }"
           />
           <!-- ou -->
 
@@ -31,7 +31,7 @@
             color="primary"
             icon="mdi-plus"
             dense
-            :to="{ name: 'form-category' }"
+            :to="{ name: 'form-product' }"
           /> -->
         </template>
 
@@ -53,7 +53,7 @@
               color="negative"
               dense
               size="sm"
-              @click="handleRemoveCategory(props.row)"
+              @click="handleRemoveProduct(props.row)"
             >
               <q-tooltip> Deletar </q-tooltip>
             </q-btn>
@@ -69,7 +69,7 @@
         fab
         icon="mdi-plus"
         color="primary"
-        :to="{ name: 'form-category' }"
+        :to="{ name: 'form-product' }"
       />
       <!-- ou -->
 
@@ -78,7 +78,7 @@
         fab
         icon="mdi-plus"
         color="primary"
-        :to="{ name: 'form-category' }"
+        :to="{ name: 'form-product' }"
       /> -->
     </q-page-sticky>
   </q-page>
@@ -93,14 +93,14 @@ import useApi from "src/composables/UseApi";
 import useNotify from "src/composables/UseNotify";
 import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
-import { columnsCategory } from "./table";
+import { columnsProduct } from "./table";
 
 /* vue3 */
 export default defineComponent({
-  name: "PageCategoryList",
+  name: "PageproductList",
 
   setup() {
-    const categories = ref([]);
+    const products = ref([]);
 
     /* Com esta variável "api", temos acesso a todos os métodos
        dentro do composable de acesso a api (para o supabase)
@@ -116,36 +116,36 @@ export default defineComponent({
 
     const $q = useQuasar();
 
-    const table = "category";
+    const table = "product";
 
     const { notifyError, notifySuccess } = useNotify();
 
-    const handleListCategories = async () => {
+    const handleListProducts = async () => {
       try {
-        /* Tabela do supabase "category" */
+        /* Tabela do supabase "product" */
         loading.value = true;
-        categories.value = await list(table);
+        products.value = await list(table);
         loading.value = false;
       } catch (error) {
         notifyError(error.message);
       }
     };
 
-    const handleEdit = (category) => {
-      router.push({ name: "form-category", params: { id: category.id } });
+    const handleEdit = (product) => {
+      router.push({ name: "form-product", params: { id: product.id } });
     };
 
-    const handleRemoveCategory = async (category) => {
+    const handleRemoveProduct = async (product) => {
       try {
         $q.dialog({
           title: "Confirm",
-          message: `Do you really delete ${category.name} ?`,
+          message: `Do you really delete ${product.name} ?`,
           cancel: true,
           persistent: true,
         }).onOk(async () => {
-          await remove(table, category.id);
+          await remove(table, product.id);
           notifySuccess("successfully deleted");
-          handleListCategories();
+          handleListProducts();
         });
       } catch (error) {
         notifyError(error.message);
@@ -153,16 +153,16 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      handleListCategories();
+      handleListProducts();
     });
 
     /* return: Para serem usados aqui neste componente mesmo */
     return {
-      columnsCategory,
-      categories,
+      columnsProduct,
+      products,
       loading,
       handleEdit,
-      handleRemoveCategory,
+      handleRemoveProduct,
     };
   },
 });
