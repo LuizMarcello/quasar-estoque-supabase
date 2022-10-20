@@ -36,11 +36,12 @@
           prefix="R$"
         />
 
-        <!-- option-value: o "id" da categoria que vai vir -->
-        <!-- option-label: O que vai ser exibido da categoria, no caso, o "name" -->
+        <!-- option-value: Qual o "id" da categoria que vai vir -->
+        <!-- option-label: O que vai ser exibido da categoria no select,
+                           no caso, o "name" -->
         <!-- map-options: Para poder mapear as opções acima -->
-        <!-- emit-value: Para que seja emitido somente o valor e não o objeto
-                         completo que virá no retôrno-->
+        <!-- emit-value: Para que no retôrno, seja emitido somente o valor
+                         desejado(id), e não o objeto completo. -->
         <q-select
           v-model="form.category_id"
           :options="optionsCategory"
@@ -50,6 +51,9 @@
           map-options
           emit-value
         />
+        
+        <!-- Um debug -->
+        <!-- {{ form.category_id }} -->
 
         <q-btn
           :label="isUpdate ? 'Update' : 'Save'"

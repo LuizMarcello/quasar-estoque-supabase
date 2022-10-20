@@ -37,13 +37,19 @@
 
         <template v-slot:body-cell-img_url="props">
           <q-td :props="props">
-            <q-avatar>
+            <q-avatar v-if="props.row.img_url">
               <!-- Toda informação que vem da tabela, da coluna
                    "row.img_url", será modificada, e ao invés do conteúdo
                    original da coluna, que era a url da imagem informada, agora
                    na listagem, será exibido a própria imagem -->
               <img :src="props.row.img_url" />
             </q-avatar>
+            <q-avatar
+              v-else
+              color="grey"
+              text-color="white"
+              icon="mdi-image-off"
+            />
           </q-td>
         </template>
 
