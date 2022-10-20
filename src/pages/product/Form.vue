@@ -5,7 +5,7 @@
   <q-page padding>
     <div class="row justify-center">
       <div class="col-12 text-center">
-        <p class="text-h6">Form Category</p>
+        <p class="text-h6">Form Product</p>
       </div>
 
       <q-form
@@ -16,10 +16,41 @@
           label="Name"
           v-model="form.name"
           lazy-rules
-          :rules="[
-            (val) => (val && val.length > 0) || 'Informe seu nome completo',
-          ]"
+          :rules="[(val) => (val && val.length > 0) || 'Name is required']"
         />
+
+        <q-editor v-model="form.description" min-height="5rem" />
+
+        <q-input
+          label="Amount"
+          v-model="form.amount"
+          :rules="[(val) => (val && val.length > 0) || 'Amount is required']"
+          type="number"
+        />
+
+        <q-input
+          label="Price"
+          v-model="form.price"
+          lazy-rules
+          :rules="[(val) => (val && val.length > 0) || 'Price is required']"
+          prefix="R$"
+        />
+
+        <!-- option-value: o "id" da categoria que vai vir -->
+        <!-- option-label: O que vai ser exibido da categoria, no caso, o "name" -->
+        <!-- map-options: Para poder mapear as opções acima -->
+        <!-- emit-value: Para que seja emitido somente o valor e não o objeto
+                         completo que virá no retôrno-->
+        <q-select
+          v-model="form.category_id"
+          :options="optionsCategory"
+          label="Category"
+          option-value="id"
+          option-label="name"
+          map-options
+          emit-value
+        />
+
         <q-btn
           :label="isUpdate ? 'Update' : 'Save'"
           color="primary"
@@ -34,7 +65,7 @@
           class="full-width"
           rounded
           flat
-          :to="{ name: 'category' }"
+          :to="{ name: 'product' }"
         />
       </q-form>
     </div>
@@ -63,33 +94,44 @@ export default defineComponent({
   name: "PageFormCategory",
 
   setup() {
-    const table = "category";
+    const table = "product";
     const router = useRouter();
     const route = useRoute();
-    const { post, getById, update } = useApi();
+    const { post, getById, update, list } = useApi();
     const { notifyError, notifySuccess } = useNotify();
 
     /* Propriedade computada verificando se é para atualizar ou salvar uma nova categoria */
     /* Verificando se existe ou não o "id" na rota(url) */
     const isUpdate = computed(() => route.params.id);
 
-    let category = {};
+    let product = {};
+
+    const optionsCategory = ref([]);
 
     const form = ref({
       name: "",
+      description: "",
+      amount: 0,
+      price: 0,
+      category_id: "",
     });
 
     /* Quando este componente for montado, verifica se tem o "id"
        na rota ou não, para saber se é um novo registro ou atualização
        É usado o mesmo formulário para ambos */
     onMounted(() => {
+      handleListCategories();
       /* Verificando se "isUpdate" é true ou false
          Se existe o "id" na rota, ou não */
       if (isUpdate.value) {
         /* alert("É para atualizar!"); */
-        handleGetCategory(isUpdate.value);
+        handleGetProduct(isUpdate.value);
       }
     });
+
+    const handleListCategories = async () => {
+      optionsCategory.value = await list("category");
+    };
 
     const handleSubmit = async () => {
       try {
@@ -104,16 +146,16 @@ export default defineComponent({
           await post(table, form.value);
           notifySuccess("Saved Successfully");
         }
-        router.push({ name: "category" });
+        router.push({ name: "product" });
       } catch (error) {
         notifyError(error.message);
       }
     };
 
-    const handleGetCategory = async (id) => {
+    const handleGetProduct = async (id) => {
       try {
-        category = await getById(table, id);
-        form.value = category;
+        product = await getById(table, id);
+        form.value = product;
       } catch (error) {
         notifyError(error.message);
       }
@@ -125,6 +167,7 @@ export default defineComponent({
       /* handleGetCategory, */
       isUpdate,
       form,
+      optionsCategory,
     };
   },
 });

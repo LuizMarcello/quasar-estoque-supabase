@@ -37,6 +37,7 @@ const routes = [
     ],
   },
 
+
   /* Todas as rotas aqui neste layout precisam estar logadas */
   {
     path: "/",
@@ -55,6 +56,16 @@ const routes = [
         path: "form-category/:id?",
         name: "form-category",
         component: () => import("pages/category/Form.vue"),
+      },
+      {
+        path: "product",
+        name: "product",
+        component: () => import("pages/product/List.vue"),
+      },
+      {
+        path: "form-product/:id?",
+        name: "form-product",
+        component: () => import("pages/product/Form.vue"),
       },
       /*
     {
