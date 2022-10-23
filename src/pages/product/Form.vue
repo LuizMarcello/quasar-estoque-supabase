@@ -24,7 +24,7 @@
         <q-input
           label="Amount"
           v-model="form.amount"
-          :rules="[(val) => (val && val.length > 0) || 'Amount is required']"
+          :rules="[(val) => !!val || 'Amount is required']"
           type="number"
         />
 
@@ -32,7 +32,7 @@
           label="Price"
           v-model="form.price"
           lazy-rules
-          :rules="[(val) => (val && val.length > 0) || 'Price is required']"
+          :rules="[(val) => !!val || 'Price is required']"
           prefix="R$"
         />
 
@@ -50,8 +50,9 @@
           option-label="name"
           map-options
           emit-value
+          :rules="[(val) => !!val || 'Category is required']"
         />
-        
+
         <!-- Um debug -->
         <!-- {{ form.category_id }} -->
 
@@ -116,7 +117,7 @@ export default defineComponent({
       name: "",
       description: "",
       amount: 0,
-      price: 0,
+      price: "",
       category_id: "",
     });
 

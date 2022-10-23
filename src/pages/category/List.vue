@@ -59,6 +59,7 @@
             </q-btn>
           </q-td>
         </template>
+        
       </q-table>
     </div>
     <!-- "offset": espaçamentos -->

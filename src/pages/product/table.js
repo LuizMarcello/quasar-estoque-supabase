@@ -1,3 +1,7 @@
+import {
+  formatCurrency
+} from 'src/utils/format'
+
 const columnsProduct = [{
     name: "img_url",
     align: "left",
@@ -24,9 +28,9 @@ const columnsProduct = [{
     align: "left",
     label: "Price",
     field: "price",
+    format: (val) => formatCurrency(val),
     sortable: true,
   },
-
   {
     name: "actions",
     align: "right",
