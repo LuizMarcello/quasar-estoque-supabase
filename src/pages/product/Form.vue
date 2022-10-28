@@ -13,6 +13,14 @@
         @submit.prevent="handleSubmit"
       >
         <q-input
+          label="Image"
+          stack-label
+          v-model="img"
+          type="file"
+          accept="image/*"
+        />
+
+        <q-input
           label="Name"
           v-model="form.name"
           lazy-rules
@@ -102,7 +110,7 @@ export default defineComponent({
     const table = "product";
     const router = useRouter();
     const route = useRoute();
-    const { post, getById, update, list } = useApi();
+    const { post, getById, update, list, uploadImg } = useApi();
     const { notifyError, notifySuccess } = useNotify();
 
     /* Propriedade computada verificando se é para atualizar ou salvar uma nova categoria */
@@ -119,7 +127,10 @@ export default defineComponent({
       amount: 0,
       price: "",
       category_id: "",
+      img_url: "",
     });
+
+    const img = ref([]);
 
     /* Quando este componente for montado, verifica se tem o "id"
        na rota ou não, para saber se é um novo registro ou atualização
@@ -140,6 +151,11 @@ export default defineComponent({
 
     const handleSubmit = async () => {
       try {
+        if (img.value.length > 0) {
+          /* "products": Storage(file) de imagens no supabase */
+          const imgUrl = await uploadImg(img.value[0], "products");
+          form.value.img_url = imgUrl;
+        }
         /* Verificando se "isUpdate" é true ou false
            Se existe o "id" na rota, ou não */
         if (isUpdate.value) {
@@ -166,13 +182,14 @@ export default defineComponent({
       }
     };
 
-    /* "return": Para exportar para este componente mesmo */
+    /* "return": Para exportar para que este componente mesmo(Form.vue) tenha acesso. */
     return {
       handleSubmit,
       /* handleGetCategory, */
       isUpdate,
       form,
       optionsCategory,
+      img,
     };
   },
 });
