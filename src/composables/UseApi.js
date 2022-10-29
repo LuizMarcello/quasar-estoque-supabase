@@ -24,6 +24,20 @@ export default function useApi() {
     return data
   }
 
+  /* Para listar somente os produtos dddaqueleee usuário */
+  const listPublic = async (table, userId) => {
+    const {
+      data,
+      error
+    } = await supabase
+      .from(table)
+        .select('*')
+
+      .eq('user_id', userId)
+    if (error) throw error
+    return data
+  }
+
   const getById = async (table, id) => {
     const {
       data,
@@ -107,6 +121,8 @@ export default function useApi() {
 
   return {
     list,
+    /* Para listar somente os produtos dddaqueleee usuário */
+    listPublic,
     getById,
     post,
     update,

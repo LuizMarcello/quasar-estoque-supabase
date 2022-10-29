@@ -12,6 +12,18 @@
       >
         <template v-slot:top>
           <span class="text-h6"> Product </span>
+
+          <q-btn
+            label="My Store"
+            dense
+            size="sm"
+            outline
+            class="q-ml-sm"
+            icon="mdi-store"
+            color="primary"
+            @click="handleGoToStore"
+          />
+
           <q-space />
 
           <!-- Assim -->
@@ -35,7 +47,6 @@
           /> -->
         </template>
 
-
         <template v-slot:body-cell-img_url="props">
           <q-td :props="props">
             <q-avatar v-if="props.row.img_url">
@@ -53,7 +64,6 @@
             />
           </q-td>
         </template>
-        
 
         <template v-slot:body-cell-actions="props">
           <q-td :props="props" class="q-gutter-x-sm">
@@ -110,6 +120,7 @@
    este "onMounted" */
 import { defineComponent, ref, onMounted } from "vue";
 import useApi from "src/composables/UseApi";
+import useAuthUser from "src/composables/UseAuthUser";
 import useNotify from "src/composables/UseNotify";
 import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
@@ -117,7 +128,7 @@ import { columnsProduct } from "./table";
 
 /* vue3 */
 export default defineComponent({
-  name: "PageproductList",
+  name: "PageProductList",
 
   setup() {
     const products = ref([]);
@@ -126,9 +137,16 @@ export default defineComponent({
        dentro do composable de acesso a api (para o supabase)
        (UseApi.js)  */
     //const api = useApi();
-    /* Mas assim importamos o método "list", diretamente de
+    /* Mas assim, importamos os métodos "listPublic" e "remove" diretamente de
        dentro do composable */
-    const { list, remove } = useApi();
+
+    /* Para listar somente os produtos dddaqueleee usuário */
+    const { listPublic, remove } = useApi();
+
+    /* Para listar todos os produtos */
+    /*  const { list, remove } = useApi(); */
+
+    const { user } = useAuthUser();
 
     const loading = ref(true);
 
@@ -144,7 +162,10 @@ export default defineComponent({
       try {
         /* Tabela do supabase "product" */
         loading.value = true;
-        products.value = await list(table);
+        /* Para listar todos os produtos */
+        /* products.value = await list(table); */
+        /* Para listar somente os produtos dddaqueleee usuário */
+        products.value = await listPublic(table, user.value.id);
         loading.value = false;
       } catch (error) {
         notifyError(error.message);
@@ -172,6 +193,13 @@ export default defineComponent({
       }
     };
 
+    const handleGoToStore = () => {
+      /* "user.value.id:" è o id do usuário atual */
+      const idUser = user.value.id;
+      /* Enviando o "id" junto para esta rota */
+      router.push({ name: "product-public", params: { id: idUser } });
+    };
+
     onMounted(() => {
       handleListProducts();
     });
@@ -183,6 +211,7 @@ export default defineComponent({
       loading,
       handleEdit,
       handleRemoveProduct,
+      handleGoToStore,
     };
   },
 });
