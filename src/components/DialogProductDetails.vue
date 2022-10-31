@@ -1,23 +1,86 @@
+<!-- eslint-disable -->
 <template>
-  <div>
-
-  </div>
+  <!-- Dialog(modal) -->
+  <!-- Lógica para abrir e fechar o "dialog(modal)" -->
+  <q-dialog
+    :full-width="$q.platform.is.mobile"
+    :model-value="show"
+    @before-hide="handleClose"
+  >
+    <q-card>
+      <!-- Nesta "q-card-section", somente o titulo -->
+      <q-card-section>
+        <div class="text-h6">Detalhes</div>
+      </q-card-section>
+      <!-- Nesta "q-card-section", a imagem -->
+      <q-card-section v-if="product.img_url">
+        <q-img :src="product.img_url" :ratio="4 / 3" style="min-width: 300px" />
+      </q-card-section>
+      <!-- Nesta "q-card-section", as informações do produto -->
+      <q-card-section>
+        <div class="text-h6">
+          {{ product.name }}
+        </div>
+        <div class="text-subtitle2">
+          {{ formatCurrency(product.price) }}
+        </div>
+        <div class="text-body2" v-html="product.description" />
+      </q-card-section>
+      <!-- Botões de ação -->
+      <q-card-actions align="right">
+        <!-- Diretiva "v-close-popup:" Para fechar o "Dialog(modal)"  -->
+        <q-btn label="Cancel" color="primary" outline v-close-popup />
+        <q-btn
+          label="Fazer pedido"
+          icon="mdi-whatsapp"
+          color="green-7"
+          @click="handleSendWhatsApp"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script>
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent } from 'vue'
+import { formatCurrency } from 'src/utils/format'
+import { openURL } from 'quasar'
 
 export default defineComponent({
-  setup() {
-    
+  name: 'DialogProductDetails',
+
+  props: {
+    show: {
+      type: Boolean,
+      required: true
+    },
+    product: {
+      type: Object
+    }
   },
+
+  setup (props, { emit }) {
+    const phone = '43988518640'
+    const msg = 'Olá, fiquei interessado no produto: '
+
+    const handleClose = () => {
+      emit('hideDialog')
+    }
+
+    const handleSendWhatsApp = () => {
+      const link = encodeURI(
+        `https://api.whatsapp.com/send?phone=55${phone}&text=${msg} - ${
+          props.product.name
+        } - ${formatCurrency(props.product.price)}`
+      )
+      openURL(link)
+    }
+
+    return {
+      formatCurrency,
+      handleClose,
+      handleSendWhatsApp
+    }
+  }
 })
 </script>
-
-
-
-
-
-
-
-
