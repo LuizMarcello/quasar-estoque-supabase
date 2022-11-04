@@ -74,6 +74,12 @@ const linksList = [
     icon: 'mdi-archive',
     routeName: 'product'
   },
+  {
+    title: 'Config',
+    caption: '',
+    icon: 'mdi-cog',
+    routeName: 'form-config'
+  }
 ]
 
 export default defineComponent({

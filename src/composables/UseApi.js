@@ -3,6 +3,19 @@ import useAuthUser from './UseAuthUser'
 import {
   v4 as uuidv4
 } from 'uuid';
+import {
+  useRoute
+} from 'vue-router'
+import {
+  useBrand
+} from 'src/composables/UseBrand'
+
+const brand = ref({
+  primary: '',
+  secondary: '',
+  name: '',
+  phone: ''
+})
 
 export default function useApi() {
   const {
@@ -12,6 +25,12 @@ export default function useApi() {
   const {
     user
   } = useAuthUser()
+
+  const route = useRoute()
+
+  const {
+    setBrand
+  } = useBrand()
 
   const list = async (table) => {
     const {
@@ -31,7 +50,7 @@ export default function useApi() {
       error
     } = await supabase
       .from(table)
-        .select('*')
+      .select('*')
 
       .eq('user_id', userId)
     if (error) throw error
@@ -117,6 +136,27 @@ export default function useApi() {
     } = supabase.storage.from(storage).getPublicUrl(fileName)
     if (error) throw error
     return publicURL
+  }
+
+  const getBrand = () => {
+    /* Verificando em duas urls diferentes, o "id" do usuário */
+    /* Se o usuário está logado, ele possui o id */
+    /* "?": Optional-chain do javascript, que verifica se "user" e "value" existem */
+    const id = user?.value?.id || route.params.id
+    if (id) {
+      const {
+        data,
+        error
+      } = await supabase
+        .from('config')
+        .select('*')
+        .eq('user_id', id)
+      if (error) throw error
+      if (data.length > 0) {
+        brand.value = data[0]
+        setBrand(brand.value.primary, brand.value.secondary)
+      }
+    }
   }
 
   return {
