@@ -138,7 +138,7 @@ export default function useApi() {
     return publicURL
   }
 
-  const getBrand = () => {
+  const getBrand = async () => {
     /* Verificando em duas urls diferentes, o "id" do usuário */
     /* Se o usuário está logado, ele possui o id */
     /* "?": Optional-chain do javascript, que verifica se "user" e "value" existem */
