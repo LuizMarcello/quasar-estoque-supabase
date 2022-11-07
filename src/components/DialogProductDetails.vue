@@ -31,6 +31,7 @@
         <!-- Diretiva "v-close-popup:" Para fechar o "Dialog(modal)"  -->
         <q-btn label="Cancel" color="primary" outline v-close-popup />
         <q-btn
+          v-if="brand.phone"
           label="Fazer pedido"
           icon="mdi-whatsapp"
           color="green-7"
@@ -42,45 +43,51 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue'
-import { formatCurrency } from 'src/utils/format'
-import { openURL } from 'quasar'
+import { defineComponent } from "vue";
+import { formatCurrency } from "src/utils/format";
+import { openURL } from "quasar";
+/* Não precisa das chaves. Foi exportado como "export default" lá no composable UseApi.js */
+import useApi from "src/composables/UseApi";
 
 export default defineComponent({
-  name: 'DialogProductDetails',
+  name: "DialogProductDetails",
 
   props: {
     show: {
       type: Boolean,
-      required: true
+      required: true,
     },
     product: {
-      type: Object
-    }
+      type: Object,
+    },
   },
 
-  setup (props, { emit }) {
-    const phone = '43988518640'
-    const msg = 'Olá, fiquei interessado no produto: '
+  setup(props, { emit }) {
+    /* const phone = "43988518640"; */
+    const msg = "Olá, fiquei interessado no produto: ";
+    const { brand } = useApi;
 
     const handleClose = () => {
-      emit('hideDialog')
-    }
+      emit("hideDialog");
+    };
 
     const handleSendWhatsApp = () => {
       const link = encodeURI(
-        `https://api.whatsapp.com/send?phone=55${phone}&text=${msg} - ${
-          props.product.name
-        } - ${formatCurrency(props.product.price)}`
-      )
-      openURL(link)
-    }
+        `https://api.whatsapp.com/send?phone=55${
+          brand.value.phone
+        }&text=${msg} - ${props.product.name} - ${formatCurrency(
+          props.product.price
+        )}`
+      );
+      openURL(link);
+    };
 
     return {
       formatCurrency,
       handleClose,
-      handleSendWhatsApp
-    }
-  }
-})
+      handleSendWhatsApp,
+      brand,
+    };
+  },
+});
 </script>

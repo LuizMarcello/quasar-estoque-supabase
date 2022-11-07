@@ -24,6 +24,17 @@
             @click="handleGoToStore"
           />
 
+          <q-btn
+            label="Copy Link"
+            dense
+            size="sm"
+            outline
+            class="q-ml-sm"
+            icon="mdi-content-copy"
+            color="primary"
+            @click="handleCopyPublicUrl"
+          />
+
           <q-space />
 
           <!-- Assim -->
@@ -123,7 +134,9 @@ import useApi from "src/composables/UseApi";
 import useAuthUser from "src/composables/UseAuthUser";
 import useNotify from "src/composables/UseNotify";
 import { useRouter } from "vue-router";
-import { useQuasar } from "quasar";
+/* openURL: Facilitador do Quasar que abre uma url externa */
+/* copyToClipboard: Facilitador do Quasar que copia o link para o clipboard*/
+import { useQuasar, openURL, copyToClipboard } from "quasar";
 import { columnsProduct } from "./table";
 
 /* vue3 */
@@ -196,8 +209,31 @@ export default defineComponent({
     const handleGoToStore = () => {
       /* "user.value.id:" è o id do usuário atual */
       const idUser = user.value.id;
+      const linkkk = router.resolve({
+        name: "product-public",
+        params: { id: idUser },
+      });
       /* Enviando o "id" junto para esta rota */
-      router.push({ name: "product-public", params: { id: idUser } });
+      /* router.push({ name: "product-public", params: { id: idUser } }); */
+      /* "origin": url original(no caso "localhost:8080") */
+      openURL(window.origin + linkkk.href);
+    };
+
+    const handleCopyPublicUrl = async () => {
+      /* "user.value.id:" è o id do usuário atual */
+      const idUser = user.value.id;
+      const linkkk = router.resolve({
+        name: "product-public",
+        params: { id: idUser },
+      });
+      const externalLink = window.origin + linkkk.href;
+      copyToClipboard(externalLink)
+        .then(() => {
+          notifySuccess("Sucessfully copied");
+        })
+        .catch(() => {
+          notifyError("Error copied link");
+        });
     };
 
     onMounted(() => {
@@ -212,6 +248,7 @@ export default defineComponent({
       handleEdit,
       handleRemoveProduct,
       handleGoToStore,
+      handleCopyPublicUrl,
     };
   },
 });

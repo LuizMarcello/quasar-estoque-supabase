@@ -17,7 +17,7 @@
           v-model="form.name"
           lazy-rules
           :rules="[
-            val => (val && val.length > 0) || 'Informe seu nome completo'
+            (val) => (val && val.length > 0) || 'Informe seu nome completo',
           ]"
         />
         <!-- unmasked-value: O valor vai para o banco de dados sem a máscara -->
@@ -68,75 +68,77 @@
 /* "ref": Para fazer o formulário reativo */
 /* "onMounted": Gancho, ciclo de vida */
 /* "computed": Propriedades computadas */
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent, ref, onMounted } from "vue";
 /* useRouter: Fazer roteamento */
 /* useRoute: Verificar a rota atual */
-import { useRouter } from 'vue-router'
+import { useRouter } from "vue-router";
 /* Importando o composable de acesso a API(UseApi.js) */
 /* Sem as chaves, porque ainda não está pegando nada lá de dentro */
-import useApi from 'src/composables/UseApi'
+import useApi from "src/composables/UseApi";
 /* Importando o composable de notify(useNotify.js) */
 /* Sem as chaves, porque ainda não está pegando nada lá de dentro */
-import useNotify from 'src/composables/UseNotify'
+import useNotify from "src/composables/UseNotify";
 
-import useBrand from 'src/composables/UseBrand'
+import useBrand from "src/composables/UseBrand";
+import useAuthUser from "src/composables/UseAuthUser";
 
 /* "export default": Para exportar também para outros componentes  */
 export default defineComponent({
-  name: 'PageFormConfig',
+  name: "PageFormConfig",
 
-  setup () {
-    const table = 'config'
-    const router = useRouter()
-    const { post, list, update } = useApi()
-    const { notifyError, notifySuccess } = useNotify()
-    const { setBrand } = useBrand()
+  setup() {
+    const table = "config";
+    const router = useRouter();
+    const { post, listPublic, update } = useApi();
+    const { notifyError, notifySuccess } = useNotify();
+    const { setBrand } = useBrand();
+    const { user } = useAuthUser();
 
-    let config = {}
+    let config = {};
 
     const form = ref({
-      name: '',
-      phone: '',
-      primary: '',
-      secondary: ''
-    })
+      name: "",
+      phone: "",
+      primary: "",
+      secondary: "",
+    });
 
     onMounted(() => {
-      handleGetConfig()
-    })
+      handleGetConfig();
+    });
 
     const handleSubmit = async () => {
       try {
         /* Verificando se existe o id no formulário, se é update */
         if (form.value.id) {
-          await update(table, form.value)
-          notifySuccess('Update Successfully')
+          await update(table, form.value);
+          notifySuccess("Update Successfully");
         } else {
           /* Sem o id na rota, então só faz o submit normalmente */
-          await post(table, form.value)
-          notifySuccess('Saved Successfully')
+          await post(table, form.value);
+          notifySuccess("Saved Successfully");
         }
-        setBrand(form.value.primary, form.value.secondary)
-        router.push({ name: 'me' })
+        setBrand(form.value.primary, form.value.secondary);
+        router.push({ name: "me" });
       } catch (error) {
-        notifyError(error.message)
+        notifyError(error.message);
       }
-    }
+    };
 
     const handleGetConfig = async () => {
       try {
-        config = await list(table)
-        form.value = config[0]
+        config = await listPublic(table, user.value.id);
+        form.value = config[0];
       } catch (error) {
-        notifyError(error.message)
+        notifyError(error.message);
       }
-    }
+    };
 
     /* "return": Para exportar para este componente mesmo */
     return {
       handleSubmit,
-      form
-    }
-  }
-})
+      form,
+    };
+  },
+});
 </script>
