@@ -2,6 +2,11 @@
 <!-- Este é o componente pai do "DialogProductDetails.vue" -->
 <template>
   <q-page padding>
+    <div class="row" v-if="brand.name">
+      <div class="col-12 text-center text-h4">
+        {{ brand.name }}
+      </div>
+    </div>
     <div class="row">
       <q-table
         title="Products"
@@ -66,26 +71,26 @@
 /* vue3 */
 /* Na "compositionApi" do vue3, temos que importar
    este "onMounted" */
-import { defineComponent, ref, onMounted } from 'vue'
-import useApi from 'src/composables/UseApi'
-import { useRoute } from 'vue-router'
-import useNotify from 'src/composables/UseNotify'
-import { columnsProduct } from './table'
-import { formatCurrency } from 'src/utils/format'
+import { defineComponent, ref, onMounted } from "vue";
+import useApi from "src/composables/UseApi";
+import { useRoute } from "vue-router";
+import useNotify from "src/composables/UseNotify";
+import { columnsProduct } from "./table";
+import { formatCurrency } from "src/utils/format";
 /* Importando aqui este componente(também será declarado) */
-import DialogProductDetails from 'src/components/DialogProductDetails.vue'
+import DialogProductDetails from "src/components/DialogProductDetails.vue";
 
 /* vue3 */
 export default defineComponent({
-  name: 'PageproductPublic',
+  name: "PageproductPublic",
 
   /* Declarando aqui este componente(já foi importado) */
   components: {
-    DialogProductDetails
+    DialogProductDetails,
   },
 
-  setup () {
-    const products = ref([])
+  setup() {
+    const products = ref([]);
 
     /* Com esta variável "api", temos acesso a todos os métodos
        dentro do composable de acesso a api (para o supabase)
@@ -95,54 +100,54 @@ export default defineComponent({
        dentro do composable */
 
     /* Para listar somente os produtos dddaqueleee usuário */
-    const { listPublic } = useApi()
+    const { listPublic, brand } = useApi();
 
     /* Para listar todos os produtos */
     /*  const { list, remove } = useApi(); */
 
     /* const { user } = useAuthUser(); */
 
-    const loading = ref(true)
+    const loading = ref(true);
 
-    const filter = ref('')
+    const filter = ref("");
 
-    const table = 'product'
+    const table = "product";
 
-    const showDialogDetails = ref(false)
+    const showDialogDetails = ref(false);
 
-    const productDetails = ref({})
+    const productDetails = ref({});
 
-    const { notifyError } = useNotify()
+    const { notifyError } = useNotify();
 
-    const route = useRoute()
+    const route = useRoute();
 
-    const handleListProducts = async userId => {
+    const handleListProducts = async (userId) => {
       try {
         /* Tabela do supabase "product" */
-        loading.value = true
+        loading.value = true;
         /* Para listar todos os produtos */
         /* products.value = await list(table); */
         /* Para listar somente os produtos dddaqueleee usuário */
         /* products.value = await listPublic(table, user.value.id); */
-        products.value = await listPublic(table, userId)
-        loading.value = false
+        products.value = await listPublic(table, userId);
+        loading.value = false;
       } catch (error) {
-        notifyError(error.message)
+        notifyError(error.message);
       }
-    }
+    };
 
-    const handleShowDetails = product => {
+    const handleShowDetails = (product) => {
       /* Recebendo os detalhes deste produto */
-      productDetails.value = product
+      productDetails.value = product;
       /* Abrindo o Dialog(modal) */
-      showDialogDetails.value = true
-    }
+      showDialogDetails.value = true;
+    };
 
     onMounted(() => {
       if (route.params.id) {
-        handleListProducts(route.params.id)
+        handleListProducts(route.params.id);
       }
-    })
+    });
 
     /* return: Para serem usados aqui neste componente mesmo */
     return {
@@ -153,8 +158,9 @@ export default defineComponent({
       formatCurrency,
       showDialogDetails,
       productDetails,
-      handleShowDetails
-    }
-  }
-})
+      handleShowDetails,
+      brand,
+    };
+  },
+});
 </script>

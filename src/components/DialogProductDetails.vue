@@ -47,7 +47,7 @@ import { defineComponent } from "vue";
 import { formatCurrency } from "src/utils/format";
 import { openURL } from "quasar";
 /* Não precisa das chaves. Foi exportado como "export default" lá no composable UseApi.js */
-import useApi from "src/composables/UseApi";
+import UseApi from "src/composables/UseApi";
 
 export default defineComponent({
   name: "DialogProductDetails",
@@ -65,7 +65,7 @@ export default defineComponent({
   setup(props, { emit }) {
     /* const phone = "43988518640"; */
     const msg = "Olá, fiquei interessado no produto: ";
-    const { brand } = useApi;
+    const { brand } = UseApi();
 
     const handleClose = () => {
       emit("hideDialog");
