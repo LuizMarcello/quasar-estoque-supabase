@@ -8,6 +8,30 @@
       </div>
     </div>
     <div class="row">
+      <!-- option-label: ) O label deste objeto.O campo do objeto selecionado que ficará visivel no select -->
+      <!-- option-value: O campo do objeto(no caso, o ID) que será o value do objeto selecionado -->
+      <!-- map-options: mapeia todas as opções do objeto -->
+      <!-- emit-value: Para emitir somente o valor já definido, no caso, o ID -->
+      <!-- clearable: Permite limpar o filtro, após selecionar uma categoria -->
+      <!-- Este select permite selecionar uma das categorias, para posteriormente
+           pesquisar somente os itens desta categoria escolhida -->
+      <!-- @update: Se houve alguma modificação neste select -->
+      <q-select
+        outlined
+        v-model="categoryId"
+        :options="optionsCategories"
+        label="Category"
+        option-label="name"
+        option-value="id"
+        map-options
+        emit-value
+        clearable
+        class="col-12"
+        dense
+        @update:model-value="handleListProducts(route.params.id)"
+      />
+      <!-- {{ categoryId }} -->
+
       <q-table
         title="Products"
         :rows="products"
@@ -99,9 +123,6 @@ export default defineComponent({
     /* Mas assim, importamos os métodos "listPublic" e "remove" diretamente de
        dentro do composable */
 
-    /* Para listar somente os produtos dddaqueleee usuário */
-    const { listPublic, brand } = useApi();
-
     /* Para listar todos os produtos */
     /*  const { list, remove } = useApi(); */
 
@@ -115,12 +136,23 @@ export default defineComponent({
 
     const showDialogDetails = ref(false);
 
+    /* É reativo e começa com um "array de objetos" vazio */
     const productDetails = ref({});
+
+    /* É reativo e começa com um "array" vazio */
+    const optionsCategories = ref([]);
+
+    /* É reativo e começa com uma "string" vazia */
+    const categoryId = ref("");
+
+    /* Para listar somente os produtos dddaqueleee usuário */
+    const { listPublic, brand } = useApi();
 
     const { notifyError } = useNotify();
 
     const route = useRoute();
 
+    /* Trás todos os produtos */
     const handleListProducts = async (userId) => {
       try {
         /* Tabela do supabase "product" */
@@ -129,7 +161,9 @@ export default defineComponent({
         /* products.value = await list(table); */
         /* Para listar somente os produtos dddaqueleee usuário */
         /* products.value = await listPublic(table, user.value.id); */
-        products.value = await listPublic(table, userId);
+        products.value = categoryId.value
+          ? await listPublic(table, userId, "category_id", categoryId.value)
+          : await listPublic(table, userId);
         loading.value = false;
       } catch (error) {
         notifyError(error.message);
@@ -143,8 +177,14 @@ export default defineComponent({
       showDialogDetails.value = true;
     };
 
+    const handleListCategories = async (userId) => {
+      /* Categorias por usuário(deste usuário) */
+      optionsCategories.value = await listPublic("category", userId);
+    };
+
     onMounted(() => {
       if (route.params.id) {
+        handleListCategories(route.params.id);
         handleListProducts(route.params.id);
       }
     });
@@ -159,7 +199,11 @@ export default defineComponent({
       showDialogDetails,
       productDetails,
       handleShowDetails,
+      handleListProducts,
       brand,
+      optionsCategories,
+      categoryId,
+      route,
     };
   },
 });

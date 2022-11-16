@@ -27,13 +27,16 @@ export default function useApi() {
     return data;
   };
 
-  /* Para listar somente os produtos dddaqueleee usuário */
-  const listPublic = async (table, userId) => {
+  /* Para listar somente os produtos "dddaqueleee" usuário */
+  /* userId: o usuário logado, do qual serão os registros */
+  /* columnFilter: A coluna a ser filtrada(Para pesquisar por categoria) */
+  /* filter: O valor(Para pesquisar por categoria) */
+  const listPublic = async (table, userId, columnFilter = "", filter = "") => {
     const { data, error } = await supabase
       .from(table)
       .select("*")
-
-      .eq("user_id", userId);
+      .eq("user_id", userId)
+      .eq(columnFilter, filter);
     if (error) throw error;
     return data;
   };

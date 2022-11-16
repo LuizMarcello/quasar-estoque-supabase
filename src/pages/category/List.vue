@@ -59,7 +59,6 @@
             </q-btn>
           </q-td>
         </template>
-        
       </q-table>
     </div>
     <!-- "offset": espaçamentos -->
@@ -92,6 +91,7 @@
 import { defineComponent, ref, onMounted } from "vue";
 import useApi from "src/composables/UseApi";
 import useNotify from "src/composables/UseNotify";
+import useAuthUser from "src/composables/UseAuthUser";
 import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 import { columnsCategory } from "./table";
@@ -102,30 +102,25 @@ export default defineComponent({
 
   setup() {
     const categories = ref([]);
-
+    const loading = ref(true);
+    const router = useRouter();
+    const $q = useQuasar();
+    const { user } = useAuthUser();
+    const table = "category";
     /* Com esta variável "api", temos acesso a todos os métodos
        dentro do composable de acesso a api (para o supabase)
        (UseApi.js)  */
     //const api = useApi();
     /* Mas assim importamos o método "list", diretamente de
        dentro do composable */
-    const { list, remove } = useApi();
-
-    const loading = ref(true);
-
-    const router = useRouter();
-
-    const $q = useQuasar();
-
-    const table = "category";
-
+    const { listPublic, remove } = useApi();
     const { notifyError, notifySuccess } = useNotify();
 
     const handleListCategories = async () => {
       try {
         /* Tabela do supabase "category" */
         loading.value = true;
-        categories.value = await list(table);
+        categories.value = await listPublic(table, user.value.id);
         loading.value = false;
       } catch (error) {
         notifyError(error.message);
