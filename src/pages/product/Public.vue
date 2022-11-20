@@ -32,15 +32,21 @@
       />
       <!-- {{ categoryId }} -->
 
+      <!-- Como o "initialPagination", na "table.js", está com "ref", e aqui,
+     com "v-model:pagination", então vai ser reativo, qualquer modificação
+     lá, já vai ser alterado aqui também  -->
+      <!-- "hide-pagination": Para esconder a paginação padrão do quasar -->
       <q-table
         title="Products"
         :rows="products"
         :columns="columnsProduct"
+        v-model:pagination="initialPagination"
         row-key="id"
         class="col-12"
         :loading="loading"
         :filter="filter"
         grid
+        hide-pagination
       >
         <!-- "debounce:" Esperar para começar a pesquisar -->
         <template v-slot:top>
@@ -80,6 +86,14 @@
         </template>
       </q-table>
     </div>
+    <div class="row justify-center q-mt-md">
+      <q-pagination
+        v-model="initialPagination.page"
+        :max="pagesNumber"
+        direction-links
+        @update:model-value="handleScrollToTop"
+      />
+    </div>
     <!-- Estas "props" foram criadas lá no componente
          filho, "DialogProductDetails.vue" -->
     <dialog-product-details
@@ -95,11 +109,11 @@
 /* vue3 */
 /* Na "compositionApi" do vue3, temos que importar
    este "onMounted" */
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent, ref, onMounted, computed } from "vue";
 import useApi from "src/composables/UseApi";
 import { useRoute } from "vue-router";
 import useNotify from "src/composables/UseNotify";
-import { columnsProduct } from "./table";
+import { columnsProduct, initialPagination } from "./table";
 import { formatCurrency } from "src/utils/format";
 /* Importando aqui este componente(também será declarado) */
 import DialogProductDetails from "src/components/DialogProductDetails.vue";
@@ -182,6 +196,10 @@ export default defineComponent({
       optionsCategories.value = await listPublic("category", userId);
     };
 
+    const handleScrollToTop = () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
     onMounted(() => {
       if (route.params.id) {
         handleListCategories(route.params.id);
@@ -189,7 +207,11 @@ export default defineComponent({
       }
     });
 
-    /* return: Para serem usados aqui neste componente mesmo */
+    /* "export": Para ser usado em "outro" componente */
+    /* "return": Para ser usado no "mesmo" componente */
+
+    /* export{}: Só pode ser importado exatamente com o mesmo nome */
+    /* export default: Pode ser importando com qualquer nome */
     return {
       columnsProduct,
       products,
@@ -204,6 +226,11 @@ export default defineComponent({
       optionsCategories,
       categoryId,
       route,
+      initialPagination,
+      handleScrollToTop,
+      pagesNumber: computed(() =>
+        Math.ceil(products.value.length / initialPagination.value.rowPerPage)
+      ),
     };
   },
 });

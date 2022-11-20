@@ -101,6 +101,7 @@ import useApi from "src/composables/UseApi";
 /* Importando o composable de notify(useNotify.js) */
 /* Sem as chaves, porque ainda não está pegando nada lá de dentro */
 import useNotify from "src/composables/UseNotify";
+import useAuthUser from "src/composables/UseAuthUser";
 
 /* "export default": Para exportar também para outros componentes  */
 export default defineComponent({
@@ -110,8 +111,9 @@ export default defineComponent({
     const table = "product";
     const router = useRouter();
     const route = useRoute();
-    const { post, getById, update, list, uploadImg } = useApi();
+    const { post, getById, update, listPublic, uploadImg } = useApi();
     const { notifyError, notifySuccess } = useNotify();
+    const { user } = useAuthUser();
 
     /* Propriedade computada verificando se é para atualizar ou salvar uma nova categoria */
     /* Verificando se existe ou não o "id" na rota(url) */
@@ -146,7 +148,7 @@ export default defineComponent({
     });
 
     const handleListCategories = async () => {
-      optionsCategory.value = await list("category");
+      optionsCategory.value = await listPublic("category", user.value.id);
     };
 
     const handleSubmit = async () => {

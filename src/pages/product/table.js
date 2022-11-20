@@ -1,6 +1,9 @@
 import {
   formatCurrency
 } from 'src/utils/format'
+import {
+  ref
+} from 'vue'
 
 const columnsProduct = [{
     name: "img_url",
@@ -40,8 +43,17 @@ const columnsProduct = [{
   },
 ];
 
+const initialPagination = ref({
+  page: 1,
+  rowPerPage: 5
+})
+
+/* "export": Para ser usado em "outro" componente */
+/* "return": Para ser usado no "mesmo" componente */
+
 /* export{}: Só pode ser importado exatamente com o mesmo nome */
-/* Export default: Pode ser importando com qualquer nome */
+/* export default: Pode ser importando com qualquer nome */
 export {
-  columnsProduct
+  columnsProduct,
+  initialPagination
 };
