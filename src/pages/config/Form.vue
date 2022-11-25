@@ -29,6 +29,14 @@
         />
         <!-- {{ form.phone }} -->
 
+        <q-input
+          label="Image Paralax"
+          stack-label
+          v-model="paralax"
+          type="file"
+          accept="image/*"
+        />
+
         <div class="row justify-center q-gutter-md q-pa-md">
           <q-color
             v-model="form.primary"
@@ -89,18 +97,21 @@ export default defineComponent({
   setup() {
     const table = "config";
     const router = useRouter();
-    const { post, listPublic, update } = useApi();
+    const { post, listPublic, update, uploadImg } = useApi();
     const { notifyError, notifySuccess } = useNotify();
     const { setBrand } = useBrand();
     const { user } = useAuthUser();
 
     let config = {};
 
+    const paralax = ref([]);
+
     const form = ref({
       name: "",
       phone: "",
       primary: "",
       secondary: "",
+      paralax_url: "",
     });
 
     onMounted(() => {
@@ -109,6 +120,11 @@ export default defineComponent({
 
     const handleSubmit = async () => {
       try {
+        if (paralax.value.length > 0) {
+          /* "products": Storage(file) de imagens no supabase */
+          const paralaxUrl = await uploadImg(paralax.value[0], "paralax");
+          form.value.paralax_url = paralaxUrl;
+        }
         /* Verificando se existe o id no formulário, se é update */
         if (form.value.id) {
           await update(table, form.value);
@@ -138,6 +154,7 @@ export default defineComponent({
     return {
       handleSubmit,
       form,
+      paralax,
     };
   },
 });
