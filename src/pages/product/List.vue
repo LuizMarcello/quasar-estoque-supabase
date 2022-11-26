@@ -217,6 +217,7 @@ export default defineComponent({
       /* router.push({ name: "product-public", params: { id: idUser } }); */
       /* "origin": url original(no caso "localhost:8080") */
       openURL(window.origin + linkkk.href);
+     /*  openURL(app.netlify.com/sites/quasar-supabase-lm + linkkk.href); */
     };
 
     const handleCopyPublicUrl = async () => {
